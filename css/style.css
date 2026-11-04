@@ -380,3 +380,166 @@ body.access-page {
         justify-content: center;
     }
 }
+/* ==========================================
+   PARAGON // COMMAND BANNER
+========================================== */
+
+.command-page {
+    min-height: 100vh;
+    background: #07090b;
+    color: #edf0f2;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+#paragon-command {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* BANNER */
+
+.command-banner {
+    width: 100%;
+    min-height: 280px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-image: url("../assets/command-banner.png");
+    background-size: cover;
+    background-position: center 48%;
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+    border-bottom: 1px solid rgba(190, 200, 208, 0.25);
+}
+
+/* DARK OVERLAY */
+
+.command-banner-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(3, 5, 7, 0.45),
+            rgba(3, 5, 7, 0.12),
+            rgba(3, 5, 7, 0.45)
+        ),
+        linear-gradient(
+            0deg,
+            rgba(3, 5, 7, 0.75),
+            transparent 55%,
+            rgba(3, 5, 7, 0.2)
+        );
+
+    z-index: 1;
+}
+
+/* TEXT CONTENT */
+
+.command-banner-content {
+    width: min(1200px, 92%);
+    padding: 45px 20px;
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.command-banner-label {
+    color: #c3a66d;
+    font: 10px 'Orbitron', sans-serif;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
+}
+
+.command-banner-content h1 {
+    color: #f0f0ed;
+    font: 700 clamp(24px, 4vw, 42px) 'Orbitron', sans-serif;
+    letter-spacing: clamp(2px, 0.5vw, 6px);
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.9);
+}
+
+.command-banner-line {
+    width: 90px;
+    height: 2px;
+    margin: 22px 0 17px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #c3a66d,
+        transparent
+    );
+}
+
+.command-banner-subtitle {
+    color: #e2e4e5;
+    font: 500 12px 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 10px #000;
+}
+
+.command-banner-description {
+    margin-top: 12px;
+    color: #c0c5c9;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px #000;
+}
+
+.command-banner-footer {
+    margin-top: 25px;
+    color: #c3a66d;
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+}
+
+/* COMMAND CONTENT */
+
+#command-content {
+    width: min(1400px, 94%);
+    min-height: 400px;
+    margin: 35px auto;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 650px) {
+
+    .command-banner {
+        min-height: 230px;
+        background-position: center;
+    }
+
+    .command-banner-content {
+        padding: 35px 12px;
+    }
+
+    .command-banner-label {
+        font-size: 8px;
+        letter-spacing: 2px;
+    }
+
+    .command-banner-subtitle {
+        font-size: 10px;
+        letter-spacing: 2px;
+    }
+
+    .command-banner-description {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .command-banner-footer {
+        font-size: 8px;
+    }
+
+}
