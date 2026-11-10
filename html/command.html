@@ -1,29 +1,475 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARAGON // COMMAND</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --black:#07090b;--panel:#0b0e11;
+  --white:#edf0f2;--silver:#aeb7bf;--gray:#69737b;
+  --line:rgba(190,200,208,.14);--line2:rgba(190,200,208,.06);
+  --accent:#9db5a4;--alert:#c8764f;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;font-size:12.5px;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.14;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:48px 48px}
 
-    <meta name="description" content="PARAGON STRIKE DIVISION - Command Platform">
-    <meta name="author" content="PARAGON STRIKE DIVISION">
+/* BOOT */
+#boot{position:fixed;inset:0;z-index:99;background:var(--black);padding:40px 28px;overflow:hidden;transition:opacity .55s,visibility .55s}
+#boot.gone{opacity:0;visibility:hidden}
+#bootlog{font:11px/1.85 'Orbitron',monospace;letter-spacing:.8px;color:#8f9aa2;white-space:pre-wrap}
+#bootlog b{color:var(--accent);font-weight:400}
+#bootlog .fin{color:var(--white);letter-spacing:2px}
 
-    <title>PARAGON // COMMAND</title>
+/* TOPBAR */
+#topbar{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+  padding:12px 18px;border-bottom:1px solid var(--line);background:rgba(9,12,15,.75)}
+.brand{display:flex;align-items:center;gap:9px;font:10px 'Orbitron',sans-serif;letter-spacing:2px;color:#d4dbe0}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(157,181,164,.8);animation:pulse 2.4s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.hud{display:flex;gap:16px;flex-wrap:wrap;font:9px 'Orbitron',sans-serif;letter-spacing:1.4px;color:#7c868e}
+.hud span{display:flex;gap:6px;align-items:center}
+.hud i{width:5px;height:5px;border-radius:50%;background:var(--accent);display:block}
+.hud .warn i{background:var(--alert)}
 
-    <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="../css/style.css">
+/* SHELL */
+#shell{position:relative;z-index:2;display:grid;grid-template-columns:172px 1fr;min-height:calc(100vh - 48px)}
+#rail{border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:6px;background:rgba(9,12,15,.4)}
+.rail-t{font:8px 'Orbitron',sans-serif;letter-spacing:2px;color:#4f5a62;margin:6px 0 8px 4px}
+.mod{display:flex;align-items:center;gap:9px;padding:10px;background:transparent;border:1px solid transparent;
+  color:#8b959d;font:9.5px 'Orbitron',sans-serif;letter-spacing:1.3px;cursor:pointer;text-align:left;transition:.2s;width:100%}
+.mod:hover{color:var(--white);background:rgba(190,200,208,.05)}
+.mod.on{color:var(--white);border-color:rgba(190,200,208,.28);background:rgba(190,200,208,.08)}
+.mod b{font-weight:400;color:#4f5a62;font-size:9px}
+.mod.on b{color:var(--accent)}
+#workspace{padding:18px;overflow:hidden}
+.view{display:none;animation:fade .3s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+
+/* GENERIC */
+.h{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;
+  border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:14px}
+.h h2{font:600 15px 'Orbitron',sans-serif;letter-spacing:3px;color:#e6eaed}
+.h p{font:8px 'Orbitron',sans-serif;letter-spacing:1.6px;color:#5d686f}
+.btn{padding:8px 14px;background:rgba(190,200,208,.05);border:1px solid rgba(190,200,208,.26);
+  color:#dfe4e7;font:9px 'Orbitron',sans-serif;letter-spacing:1.5px;cursor:pointer;transition:.2s}
+.btn:hover{background:rgba(190,200,208,.13);border-color:#cfd6db}
+.btn.pri{border-color:rgba(157,181,164,.55);color:#cfe0d6}
+.btn.sm{padding:5px 9px;font-size:8px}
+.panel{border:1px solid var(--line);background:rgba(11,14,17,.6)}
+
+/* CCTV */
+#grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.feed{position:relative;aspect-ratio:16/10;background:#05070a;border:1px solid var(--line);overflow:hidden}
+.feed video,.feed canvas.noise{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.feed canvas.noise{opacity:.5}
+.feed.live canvas.noise{opacity:0}
+.feed video{opacity:0;transition:.4s}
+.feed.live video{opacity:1}
+.hud-t{position:absolute;inset:0;pointer-events:none;font:7.5px 'Orbitron',monospace;letter-spacing:1px;color:#cfe0d6;
+  text-shadow:0 0 6px #000;z-index:2;padding:6px 8px;display:flex;flex-direction:column;justify-content:space-between}
+.hud-t .r{display:flex;justify-content:space-between;gap:8px}
+.rec{color:var(--alert)}
+.rec::before{content:"●";margin-right:4px;animation:pulse 1.3s infinite}
+.corner{position:absolute;width:11px;height:11px;border:1px solid rgba(157,181,164,.75);z-index:2}
+.c1{top:5px;left:5px;border-right:0;border-bottom:0}
+.c2{top:5px;right:5px;border-left:0;border-bottom:0}
+.c3{bottom:5px;left:5px;border-right:0;border-top:0}
+.c4{bottom:5px;right:5px;border-left:0;border-top:0}
+.feed::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.24) 0 1px,transparent 1px 3px)}
+.feed .ctl{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:5px;opacity:0;transition:.25s}
+.feed:hover .ctl{opacity:1}
+#nodes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.node{font:8px 'Orbitron',sans-serif;letter-spacing:1px;padding:6px 9px;border:1px solid var(--line);
+  background:rgba(190,200,208,.04);cursor:pointer;color:#98a2aa}
+.node:hover,.node.on{border-color:var(--accent);color:#d7e6dd}
+.note{font:8.5px 'Inter',sans-serif;color:#5d686f;margin-top:10px;line-height:1.7}
+
+/* DOSSIER */
+.row{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line2);font-size:11px}
+.row:nth-child(odd){background:rgba(190,200,208,.018)}
+.row dt{font:8px 'Orbitron',sans-serif;letter-spacing:1.3px;color:#5d686f}
+.row dd{color:#dbe1e5;word-break:break-word;font-family:ui-monospace,monospace;font-size:10.5px}
+.row dd.ok{color:var(--accent)}
+.class-badge{display:inline-block;padding:3px 9px;border:1px solid var(--accent);color:var(--accent);
+  font:9px 'Orbitron',sans-serif;letter-spacing:2px}
+
+/* MAP */
+#map{height:340px;border:1px solid var(--line);background:#080b0e;z-index:1}
+.leaflet-container{background:#080b0e}
+.leaflet-tile{filter:grayscale(1) brightness(.72) contrast(1.25)}
+.geo-hud{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);margin-top:10px}
+.geo-hud div{background:var(--panel);padding:8px 10px}
+.geo-hud small{display:block;font:7.5px 'Orbitron',sans-serif;letter-spacing:1.4px;color:#5d686f;margin-bottom:3px}
+.geo-hud b{font:11px ui-monospace,monospace;color:#dbe1e5;font-weight:400}
+
+/* RADAR */
+#radar-wrap{position:relative;max-width:420px;margin:0 auto;aspect-ratio:1;border:1px solid var(--line);border-radius:50%;overflow:hidden;background:radial-gradient(circle,#0b1216,#05080a)}
+#radar{width:100%;height:100%;display:block}
+#blip-list{font:9px ui-monospace,monospace;color:#7c868e;margin-top:12px;line-height:1.8;height:74px;overflow:hidden}
+
+/* CONSOLE */
+#out{height:300px;overflow-y:auto;padding:12px;font:10.5px/1.75 ui-monospace,monospace;color:#a8b2ba;
+  border:1px solid var(--line);background:#05080a}
+#out .in{color:var(--white)}
+#out .er{color:var(--alert)}
+#out .ok{color:var(--accent)}
+#cin{display:flex;border:1px solid var(--line);border-top:0}
+#cin span{padding:11px 12px;color:var(--accent);font:11px ui-monospace,monospace}
+#cin input{flex:1;background:#05080a;border:0;outline:0;color:var(--white);font:11px ui-monospace,monospace;padding:11px 0}
+
+/* TICKER */
+#ticker{position:relative;z-index:3;border-top:1px solid var(--line);padding:7px 14px;overflow:hidden;
+  font:8px 'Orbitron',sans-serif;letter-spacing:1.5px;color:#5d686f;white-space:nowrap}
+#ticker span{display:inline-block;animation:slide 42s linear infinite}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+@media(max-width:640px){
+  #shell{grid-template-columns:1fr}
+  #rail{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}
+  .rail-t{display:none}
+  .mod{width:auto;white-space:nowrap}
+  #grid{grid-template-columns:1fr}
+  .row{grid-template-columns:110px 1fr}
+}
+</style>
 </head>
-
 <body>
 
-    <main id="paragon-command">
-<!-- COMMAND PLATFORM -->
-<header id="command-header">
-    <h1>PARAGON STRIKE DIVISION</h1>
-    <p>COMMAND NETWORK</p>
-</header>
+<div id="boot"><pre id="bootlog"></pre></div>
 
-<!-- SYSTEM CONTENT -->
-<section id="command-content">
-    <!-- MODULES WILL BE ADDED HERE -->
-</section>
+<div id="topbar">
+  <div class="brand"><span class="dot"></span>PARAGON // COMMAND NETWORK</div>
+  <div class="hud">
+    <span><i></i><b id="clk">--:--:--Z</b></span>
+    <span><i></i>UPTIME <b id="up">00:00:00</b></span>
+    <span class="warn"><i></i>OP-CLEAR</span>
+  </div>
+</div>
+
+<div id="shell">
+  <nav id="rail">
+    <div class="rail-t">MODULES</div>
+    <button class="mod on" data-v="cctv"><b>01</b>CCTV RELAY</button>
+    <button class="mod" data-v="sigint"><b>02</b>SIGINT</button>
+    <button class="mod" data-v="geoint"><b>03</b>GEOINT</button>
+    <button class="mod" data-v="radar"><b>04</b>RADAR</button>
+    <button class="mod" data-v="console"><b>05</b>CONSOLE</button>
+  </nav>
+
+  <main id="workspace">
+    <section class="view on" id="v-cctv">
+      <div class="h">
+        <div><h2>CCTV RELAY</h2><p>OPTICAL NODE INTERCEPT · LOCAL BUS</p></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn sm" id="enum">ENUMERATE</button>
+          <button class="btn sm pri" id="arm">INITIALIZE FEEDS</button>
+        </div>
+      </div>
+      <div id="nodes"></div>
+      <div id="grid"></div>
+      <p class="note">Los feeds usan las cámaras reales del dispositivo visitante.</p>
+    </section>
+
+    <section class="view" id="v-sigint">
+      <div class="h">
+        <div><h2>SIGINT · TARGET PROFILE</h2><p>DEVICE FINGERPRINT · PASSIVE COLLECTION</p></div>
+        <button class="btn sm pri" id="rescan">RESCAN</button>
+      </div>
+      <dl class="panel" id="dossier"></dl>
+    </section>
+
+    <section class="view" id="v-geoint">
+      <div class="h">
+        <div><h2>GEOINT · SIGNAL TRACK</h2><p>GNSS LOCK · IP TRIANGULATION</p></div>
+        <button class="btn sm pri" id="lock">ACQUIRE LOCK</button>
+      </div>
+      <div id="map"></div>
+      <div class="geo-hud">
+        <div><small>LATITUDE</small><b id="g-lat">--</b></div>
+        <div><small>LONGITUDE</small><b id="g-lon">--</b></div>
+        <div><small>ACCURACY</small><b id="g-acc">--</b></div>
+        <div><small>ORIGIN</small><b id="g-src">STANDBY</b></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-radar">
+      <div class="h">
+        <div><h2>PROXIMITY RADAR</h2><p>PASSIVE SWEEP · 12 KM</p></div>
+        <button class="btn sm" id="radar-toggle">PAUSE</button>
+      </div>
+      <div id="radar-wrap"><canvas id="radar" width="560" height="560"></canvas></div>
+      <div id="blip-list"></div>
+    </section>
+
+    <section class="view" id="v-console">
+      <div class="h"><div><h2>COMMAND CONSOLE</h2><p>ROOT@PSD · SHELL</p></div></div>
+      <div id="out"></div>
+      <div id="cin"><span>&gt;</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="help"></div>
+    </section>
+  </main>
+</div>
+
+<div id="ticker"><span id="tick"></span></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const pad=n=>String(n).padStart(2,'0');
+const rnd=n=>Math.floor(Math.random()*n);
+const hex=n=>[...Array(n)].map(()=>rnd(16).toString(16)).join('').toUpperCase();
+
+/* BOOT */
+const LINES=['PARAGON SECURE BOOT // v4.2.1','> CRYPTO LAYER ....... AES-256-GCM [OK]','> CHAIN OF TRUST ...... VERIFIED [OK]',
+'> SIGINT BUS ......... 12 CHANNELS [OK]','> CCTV RELAY ......... 4 NODES READY','> GEOINT UPLINK ....... LOCKED',
+'> OPERATOR GATE ...... BYPASSED (DEMO)','> MOUNTING /dev/command [OK]'];
+(async()=>{
+  const log=$('#bootlog');
+  for(const l of LINES){
+    const line=document.createElement('div'); log.appendChild(line);
+    for(const ch of l){ line.textContent+=ch; await sleep(6); }
+    if(l.includes('[OK]')) line.innerHTML=line.textContent.replace('[OK]','<b>[OK]</b>');
+    await sleep(45);
+  }
+  const f=document.createElement('div'); f.className='fin'; f.textContent='ACCESS GRANTED';
+  log.appendChild(f); await sleep(420);
+  $('#boot').classList.add('gone'); setTimeout(()=>$('#boot').remove(),700);
+  bootConsole();
+})();
+
+/* CLOCK */
+const T0=Date.now();
+setInterval(()=>{
+  const d=new Date();
+  $('#clk').textContent=`${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}Z`;
+  const s=Math.floor((Date.now()-T0)/1000);
+  $('#up').textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s/60)%60)}:${pad(s%60)}`;
+},1000);
+$('#tick').textContent=('SISTEMA OPERATIVO · RED INSTITUCIONAL · CANAL SEGURO ESTABLECIDO · TELEMETRÍA NOMINAL · ').repeat(4);
+
+/* NAV */
+$$('.mod').forEach(b=>b.onclick=()=>{
+  $$('.mod').forEach(x=>x.classList.remove('on'));
+  $$('.view').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); $('#v-'+b.dataset.v).classList.add('on');
+  if(b.dataset.v==='geoint') initMap();
+});
+
+/* CCTV */
+const grid=$('#grid');
+for(let i=0;i<4;i++){
+  const f=document.createElement('div');
+  f.className='feed'; f.dataset.id='NODE-0'+(i+1);
+  f.innerHTML=`<canvas class="noise"></canvas><video playsinline muted autoplay></video>
+  <div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+  <div class="hud-t"><div class="r"><span class="rec">REC</span><span>NODE-0${i+1}</span></div>
+  <div class="r"><span class="ts">--:--:--Z</span><span class="res">0000x0000</span></div></div>
+  <div class="ctl"><button class="btn sm snap">SNAP</button><button class="btn sm rec-btn">REC</button></div>`;
+  grid.appendChild(f);
+  noise(f.querySelector('canvas.noise'));
+  const ts=f.querySelector('.ts');
+  setInterval(()=>{const d=new Date();ts.textContent=`${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}Z`},1000);
+  f.querySelector('.snap').onclick=()=>snap(f);
+  f.querySelector('.rec-btn').onclick=e=>toggleRec(f,e.target);
+}
+function noise(cv){
+  const x=cv.getContext('2d'); cv.width=160; cv.height=100;
+  (function loop(){
+    const img=x.createImageData(160,100);
+    for(let i=0;i<img.data.length;i+=4){const v=rnd(255);img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=70;}
+    x.putImageData(img,0,0); setTimeout(loop,70);
+  })();
+}
+function snap(f){
+  const v=f.querySelector('video'); if(!v.videoWidth) return;
+  const c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0);
+  const a=document.createElement('a'); a.download=`${f.dataset.id}_${Date.now()}.png`; a.href=c.toDataURL(); a.click();
+}
+let recs={};
+function toggleRec(f,btn){
+  const v=f.querySelector('video');
+  if(recs[f.dataset.id]){recs[f.dataset.id].stop();delete recs[f.dataset.id];btn.textContent='REC';return;}
+  if(!v.srcObject) return;
+  try{
+    const r=new MediaRecorder(v.srcObject,{mimeType:'video/webm'}); const ch=[];
+    r.ondataavailable=e=>ch.push(e.data);
+    r.onstop=()=>{const b=new Blob(ch,{type:'video/webm'});const a=document.createElement('a');
+      a.download=`${f.dataset.id}_${Date.now()}.webm`;a.href=URL.createObjectURL(b);a.click();};
+    r.start(); recs[f.dataset.id]=r; btn.textContent='STOP';
+  }catch(e){}
+}
+let devices=[];
+async function enumerateNodes(){
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({video:true});
+    s.getTracks().forEach(t=>t.stop());
+    devices=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
+    const box=$('#nodes'); box.innerHTML='';
+    devices.forEach(d=>{
+      const b=document.createElement('button');
+      b.className='node'; b.textContent=`${d.label||'NODE'} · ${hex(4)}`;
+      b.onclick=()=>bind(d.deviceId,b); box.appendChild(b);
+    });
+    if(!devices.length) box.innerHTML='<span class="note">Sin nodos ópticos detectados.</span>';
+  }catch(e){ $('#nodes').innerHTML='<span class="note">Acceso al hardware denegado.</span>'; }
+}
+async function bind(id,btn){
+  const f=$$('.feed').find(x=>!x.classList.contains('live'))||$$('.feed')[0];
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({video:{deviceId:{exact:id}}});
+    const v=f.querySelector('video'); v.srcObject=s; v.play();
+    f.classList.add('live');
+    v.onloadedmetadata=()=>{f.querySelector('.res').textContent=`${v.videoWidth}x${v.videoHeight}`};
+    if(btn) btn.classList.add('on');
+  }catch(e){}
+}
+$('#enum').onclick=enumerateNodes;
+$('#arm').onclick=async()=>{
+  await enumerateNodes();
+  const list=$$('.node');
+  for(let i=0;i<Math.min(4,list.length);i++){ await bind(devices[i].deviceId,list[i]); await sleep(220); }
+};
+
+/* SIGINT */
+function fpHash(){
+  try{
+    const c=document.createElement('canvas'),x=c.getContext('2d');
+    x.textBaseline='top'; x.font='14px Arial'; x.fillStyle='#f60'; x.fillRect(0,0,80,20);
+    x.fillStyle='#069'; x.fillText('PARAGON-PSD-2026',2,2);
+    return [...c.toDataURL()].reduce((a,ch)=>((a<<5)-a+ch.charCodeAt(0))|0,0).toString(16).toUpperCase();
+  }catch(e){return 'N/D'}
+}
+function gpu(){
+  try{
+    const c=document.createElement('canvas').getContext('webgl');
+    return c.getParameter(c.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);
+  }catch(e){return 'N/D'}
+}
+async function runSigint(){
+  const d=$('#dossier'); d.innerHTML='';
+  const ua=navigator.userAgent;
+  const cls=/Mobi|Android|iPhone/i.test(ua)?'MOBILE':/iPad|Tablet/i.test(ua)?'TABLET':'DESKTOP';
+  const rows=[
+    ['SESSION ID',hex(12),1],['TARGET CLASS',`<span class="class-badge">${cls}</span>`,0],
+    ['PLATFORM',navigator.platform||'N/D',0],['CPU CORES',navigator.hardwareConcurrency||'N/D',1],
+    ['RAM (GB)',navigator.deviceMemory||'N/D',1],['GPU',gpu(),0],
+    ['VIEWPORT',`${innerWidth}x${innerHeight} @${devicePixelRatio}x`,1],
+    ['SCREEN',`${screen.width}x${screen.height}`,1],['TOUCH POINTS',navigator.maxTouchPoints,1],
+    ['LANGUAGE',navigator.language,0],['TIMEZONE',Intl.DateTimeFormat().resolvedOptions().timeZone,0],
+    ['NETWORK',(navigator.connection?.effectiveType||'N/D')+' · '+(navigator.connection?.downlink||'-')+'Mb/s',1],
+    ['COOKIES',navigator.cookieEnabled?'ENABLED':'DISABLED',0],
+    ['FINGERPRINT',fpHash(),1],['USER AGENT',ua,0]
+  ];
+  if(navigator.getBattery){
+    const b=await navigator.getBattery();
+    rows.splice(12,0,['POWER',`${Math.round(b.level*100)}% ${b.charging?'· CHARGING':''}`,1]);
+  }
+  for(const [k,v,ok] of rows){
+    const r=document.createElement('div'); r.className='row';
+    r.innerHTML=`<dt>${k}</dt><dd class="${ok?'ok':''}">${v}</dd>`;
+    d.appendChild(r); await sleep(70);
+  }
+}
+$('#rescan').onclick=runSigint;
+
+/* GEOINT */
+let map,marker,circle,mapReady=false;
+function initMap(){
+  if(mapReady) return; mapReady=true;
+  map=L.map('map',{attributionControl:false}).setView([20,0],2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+}
+function plot(lat,lon,acc,src){
+  $('#g-lat').textContent=lat.toFixed(6); $('#g-lon').textContent=lon.toFixed(6);
+  $('#g-acc').textContent=acc?`±${Math.round(acc)} m`:'IP'; $('#g-src').textContent=src;
+  if(!mapReady) initMap();
+  if(marker){marker.remove();circle.remove();}
+  marker=L.circleMarker([lat,lon],{radius:6,color:'#9db5a4',fillColor:'#9db5a4',fillOpacity:1,weight:1}).addTo(map);
+  circle=L.circle([lat,lon],{radius:acc||400,color:'#9db5a4',fillOpacity:.07,weight:1}).addTo(map);
+  map.flyTo([lat,lon],acc?14:9,{duration:1.4});
+}
+$('#lock').onclick=async()=>{
+  $('#g-src').textContent='BUSCANDO';
+  const ip=await ipFallback();
+  if(!navigator.geolocation) return ip&&plot(ip.lat,ip.lon,0,'IP');
+  navigator.geolocation.getCurrentPosition(
+    p=>plot(p.coords.latitude,p.coords.longitude,p.coords.accuracy,'GNSS'),
+    ()=>ip?plot(ip.lat,ip.lon,0,'IP'):($('#g-src').textContent='DENEGADO'),
+    {enableHighAccuracy:true,timeout:9000}
+  );
+};
+async function ipFallback(){
+  try{const r=await fetch('https://ipwho.is/');const j=await r.json();
+    if(j.success) return {lat:j.latitude,lon:j.longitude,city:j.city,isp:j.connection?.isp};}catch(e){}
+  return null;
+}
+
+/* RADAR */
+const rcv=$('#radar'),rx=rcv.getContext('2d');
+let ang=0,blips=[],run=true;
+$('#radar-toggle').onclick=e=>{run=!run;e.target.textContent=run?'PAUSE':'RESUME'};
+(function sweep(){
+  requestAnimationFrame(sweep); if(!run) return;
+  const W=rcv.width,C=W/2;
+  rx.fillStyle='#05080a'; rx.fillRect(0,0,W,W);
+  rx.strokeStyle='rgba(157,181,164,.16)'; rx.lineWidth=1;
+  for(let i=1;i<=4;i++){rx.beginPath();rx.arc(C,C,i*W/9,0,7);rx.stroke();}
+  rx.beginPath();rx.moveTo(C,0);rx.lineTo(C,W);rx.moveTo(0,C);rx.lineTo(W,C);rx.stroke();
+  if(rx.createConicGradient){
+    const g=rx.createConicGradient(ang,C,C);
+    g.addColorStop(0,'rgba(157,181,164,.42)');g.addColorStop(.12,'rgba(157,181,164,0)');g.addColorStop(1,'rgba(157,181,164,0)');
+    rx.fillStyle=g;rx.beginPath();rx.moveTo(C,C);rx.arc(C,C,C,0,7);rx.fill();
+  }
+  rx.strokeStyle='rgba(157,181,164,.6)';rx.beginPath();rx.moveTo(C,C);
+  rx.lineTo(C+Math.cos(ang)*C,C+Math.sin(ang)*C);rx.stroke();
+  ang+=0.028;
+  if(Math.random()<.03&&blips.length<7){
+    blips.push({a:Math.random()*7,r:.15+Math.random()*.8,l:120,id:hex(3)});
+    $('#blip-list').innerHTML=blips.slice(-4).map(b=>`CONTACT ${b.id} · ${Math.round(b.r*12)}km · ${(Math.random()*40+2).toFixed(1)}kts`).join('<br>');
+  }
+  blips.forEach(b=>{
+    b.l-=1; if(b.l<0) return;
+    rx.fillStyle=`rgba(200,118,79,${b.l/120})`;
+    rx.beginPath();rx.arc(C+Math.cos(b.a)*b.r*C,C+Math.sin(b.a)*b.r*C,3.4,0,7);rx.fill();
+  });
+  blips=blips.filter(b=>b.l>0);
+})();
+
+/* CONSOLE */
+const out=$('#out');
+function print(t,c=''){const l=document.createElement('div');if(c)l.className=c;l.textContent=t;out.appendChild(l);out.scrollTop=out.scrollHeight;}
+function bootConsole(){print('PARAGON SHELL v4.2.1 — root@psd','ok');print('Escribe "help" para ver los comandos.');}
+$('#cmd').addEventListener('keydown',async e=>{
+  if(e.key!=='Enter') return;
+  const raw=e.target.value.trim(); if(!raw) return;
+  e.target.value=''; print('> '+raw,'in');
+  const [c]=raw.toLowerCase().split(' ');
+  switch(c){
+    case 'help': print('scan · track · cam · profile · net · ip · clear · reboot · whoami'); break;
+    case 'whoami': print('root@paragon-strike-division :: CLEARANCE ALPHA'); break;
+    case 'scan': print('Barriendo bus local...'); await sleep(600);
+      print(`Nodos ópticos: ${devices.length||'0 (usa "cam")'}`); break;
+    case 'cam': $$('.mod').find(m=>m.dataset.v==='cctv').click(); await enumerateNodes(); print('Relé CCTV abierto.','ok'); break;
+    case 'profile': $$('.mod').find(m=>m.dataset.v==='sigint').click(); runSigint(); print('Recolectando firma...','ok'); break;
+    case 'track': $$('.mod').find(m=>m.dataset.v==='geoint').click(); $('#lock').click(); print('Solicitando lock GNSS...','ok'); break;
+    case 'ip': {const r=await ipFallback(); r?print(`IP: ${r.city} · ${r.isp}`,'ok'):print('Fallo de resolución.','er'); break;}
+    case 'net': print(`Uplink: ${navigator.connection?.effectiveType||'N/D'} · ${navigator.onLine?'ONLINE':'OFFLINE'}`); break;
+    case 'clear': out.innerHTML=''; break;
+    case 'reboot': location.reload(); break;
+    default: print(`Comando no reconocido: ${c}`,'er');
+  }
+});
+
+setTimeout(()=>{ if(!$('#dossier').children.length) runSigint(); },2400);
+</script>
+</body>
+</html>
