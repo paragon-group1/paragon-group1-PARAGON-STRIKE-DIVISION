@@ -380,3 +380,284 @@ body.access-page {
         justify-content: center;
     }
 }
+
+/* ==========================================
+   PARAGON // SYSTEM BOOT
+========================================== */
+
+.system-boot {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    overflow: hidden;
+    background: #050708;
+    color: #edf0f2;
+    font-family: 'Inter', sans-serif;
+}
+
+.system-boot.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bootFadeIn .5s ease;
+}
+
+.boot-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 45px 45px;
+    opacity: .5;
+}
+
+.boot-code-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-around;
+    pointer-events: none;
+    opacity: .25;
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+.boot-code-column {
+    position: relative;
+    width: 12%;
+    color: #75a68a;
+    font: 10px/2 monospace;
+    overflow-wrap: anywhere;
+    opacity: .55;
+    animation: bootCodeFall linear infinite;
+}
+
+.boot-code-column:nth-child(even) {
+    color: #b49a60;
+}
+
+@keyframes bootCodeFall {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100vh); }
+}
+
+.boot-interface {
+    width: min(680px, 92%);
+    max-height: 94vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+    padding: 28px;
+    background: rgba(8, 12, 13, .91);
+    border: 1px solid rgba(190, 200, 208, .18);
+    box-shadow: 0 0 80px rgba(0,0,0,.7);
+    backdrop-filter: blur(8px);
+}
+
+.boot-header,
+.boot-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    color: #89969b;
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 1.5px;
+}
+
+.boot-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.boot-indicator {
+    width: 7px;
+    height: 7px;
+    background: #bba064;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #bba064;
+    animation: bootPulse 1.2s infinite;
+}
+
+.boot-reference {
+    color: #59636b;
+}
+
+.boot-main {
+    padding: 35px 0;
+    text-align: center;
+}
+
+.boot-emblem {
+    width: 75px;
+    height: 75px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 22px;
+    border: 1px solid rgba(190, 160, 95, .55);
+    color: #c6a45d;
+    font: 700 43px 'Orbitron', sans-serif;
+    box-shadow: 0 0 30px rgba(198,164,93,.08);
+}
+
+.boot-eyebrow {
+    color: #9b9fa0;
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+}
+
+.boot-main h1 {
+    margin-top: 12px;
+    font: 800 clamp(35px, 7vw, 55px) 'Orbitron', sans-serif;
+    letter-spacing: 5px;
+}
+
+.boot-main h2 {
+    margin-top: 7px;
+    color: #aeb7bf;
+    font: 500 clamp(13px, 3vw, 18px) 'Orbitron', sans-serif;
+    letter-spacing: 4px;
+}
+
+.boot-divider {
+    width: 65px;
+    height: 1px;
+    margin: 25px auto;
+    background: #b99c60;
+}
+
+.boot-progress-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: #aeb7bf;
+    font: 10px 'Orbitron', sans-serif;
+    letter-spacing: 1.5px;
+}
+
+.boot-progress-heading strong {
+    color: #d1b16b;
+    font-size: 15px;
+}
+
+.boot-progress-track {
+    width: 100%;
+    height: 7px;
+    background: #20292a;
+    overflow: hidden;
+}
+
+.boot-progress-bar {
+    width: 1%;
+    height: 100%;
+    background: linear-gradient(90deg, #7d6941, #d4b36a);
+    box-shadow: 0 0 15px rgba(212,179,106,.45);
+    transition: width .08s linear;
+}
+
+.boot-status {
+    margin-top: 15px;
+    min-height: 16px;
+    color: #91aa98;
+    font: 10px 'Orbitron', sans-serif;
+    letter-spacing: 1.5px;
+}
+
+.boot-diagnostics {
+    margin-top: 25px;
+    padding: 15px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.07);
+}
+
+.diagnostic-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    color: #8d999f;
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+.diagnostic-row:last-child {
+    border-bottom: none;
+}
+
+.diagnostic-row strong {
+    color: #b69b61;
+    font-size: 9px;
+}
+
+.diagnostic-row strong.verified {
+    color: #8fb79b;
+}
+
+.boot-terminal {
+    margin-top: 22px;
+    padding: 13px;
+    text-align: left;
+    background: rgba(0,0,0,.35);
+    border: 1px solid rgba(255,255,255,.07);
+}
+
+.boot-terminal-heading {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 9px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    color: #b69b61;
+    font: 8px 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+.boot-log {
+    height: 75px;
+    overflow: hidden;
+    color: #83a18c;
+    font: 9px/1.8 monospace;
+}
+
+.boot-log p {
+    overflow-wrap: anywhere;
+}
+
+.boot-footer {
+    padding-top: 17px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    font-size: 8px;
+}
+
+@keyframes bootPulse {
+    50% { opacity: .3; }
+}
+
+@keyframes bootFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 500px) {
+    .boot-interface {
+        padding: 20px 16px;
+    }
+
+    .boot-header,
+    .boot-footer {
+        font-size: 7px;
+        letter-spacing: .7px;
+    }
+
+    .boot-main {
+        padding: 25px 0;
+    }
+
+    .diagnostic-row {
+        font-size: 8px;
+    }
+}
