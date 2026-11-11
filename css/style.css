@@ -467,18 +467,24 @@ body.access-page {
     to { transform: translateY(100vh); }
 }
 
+
 .boot-interface {
-    width: min(680px, 92%);
-    max-height: 94vh;
+    width: min(620px, 92%);
+    max-height: 82vh;
     overflow-y: auto;
-    position: relative;
+
+    position: absolute;
+    top: 59%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     z-index: 2;
     padding: 28px;
-    background: rgba(8, 12, 13, .91);
-    border: 1px solid rgba(190, 200, 208, .18);
-    box-shadow: 0 0 80px rgba(0,0,0,.7);
-    backdrop-filter: blur(8px);
-    transform: translateY(8vh);
+
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .boot-header,
@@ -511,10 +517,15 @@ body.access-page {
     color: #59636b;
 }
 
+
 .boot-main {
-    padding: 35px 0;
+    padding: 25px 0;
     text-align: center;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
 }
+
 
 .boot-emblem {
     width: 75px;
