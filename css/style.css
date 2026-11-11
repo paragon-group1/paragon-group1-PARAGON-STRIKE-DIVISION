@@ -413,24 +413,48 @@ body.access-page {
     opacity: .5;
 }
 
+/* ==========================================
+   PARAGON // ANIMATED SYSTEM CODES
+========================================== */
+
 .boot-code-background {
     position: absolute;
-    inset: 0;
-    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 48%;
+    height: 100%;
+
     display: flex;
     justify-content: space-around;
+    overflow: hidden;
+
     pointer-events: none;
-    opacity: .25;
-    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    opacity: 0.25;
+
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 15%,
+        black 85%,
+        transparent
+    );
+
+    z-index: 1;
 }
 
 .boot-code-column {
     position: relative;
-    width: 12%;
+    width: 7%;
+    flex-shrink: 0;
+
     color: #75a68a;
-    font: 10px/2 monospace;
+    font-family: monospace;
+    font-size: 10px;
+    line-height: 2;
+
     overflow-wrap: anywhere;
-    opacity: .55;
+    opacity: 0.55;
+
     animation: bootCodeFall linear infinite;
 }
 
@@ -454,6 +478,7 @@ body.access-page {
     border: 1px solid rgba(190, 200, 208, .18);
     box-shadow: 0 0 80px rgba(0,0,0,.7);
     backdrop-filter: blur(8px);
+    transform: translateY(8vh);
 }
 
 .boot-header,
@@ -660,4 +685,24 @@ body.access-page {
     .diagnostic-row {
         font-size: 8px;
     }
+}
+/* ==========================================
+   PARAGON // SYSTEM BOOT WATERMARK
+========================================== */
+
+.boot-watermark {
+    position: absolute;
+    width: 850px;
+    height: 850px;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 1;
 }
