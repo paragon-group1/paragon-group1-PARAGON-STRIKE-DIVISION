@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         bootLog.appendChild(line);
 
-        while (bootLog.children.length > 5) {
+        while (bootLog.children.length > 12) {
             bootLog.removeChild(bootLog.firstChild);
         }
 
