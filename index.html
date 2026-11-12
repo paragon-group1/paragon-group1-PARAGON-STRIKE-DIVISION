@@ -111,17 +111,41 @@
 <!-- PARAGON SYSTEM BOOT -->
 <div id="systemBoot" class="system-boot" aria-hidden="true">
 
-   <div class="boot-grid"></div>
+    <div class="boot-grid"></div>
+    <div class="boot-scanline"></div>
+    <div class="boot-vignette"></div>
 
-<!-- LOGO CENTRAL DE PARAGON -->
-<img
-    src="assets/paragon-emblem-2026.png"
-    class="boot-watermark"
-    alt=""
->
+    <!-- MARCO HUD -->
+    <div class="hud-frame" aria-hidden="true">
+        <span class="hud-corner hud-corner--tl"></span>
+        <span class="hud-corner hud-corner--tr"></span>
+        <span class="hud-corner hud-corner--bl"></span>
+        <span class="hud-corner hud-corner--br"></span>
 
-<!-- CÓDIGOS ANIMADOS -->
-<div class="boot-code-background" id="bootCodeBackground"></div>
+        <span class="hud-hazard hud-hazard--top"></span>
+        <span class="hud-hazard hud-hazard--bottom"></span>
+
+        <span class="hud-reticle"></span>
+
+        <span class="hud-rail hud-rail--left">PSD-SYS/001 // SECURE CHANNEL // DO NOT DISCONNECT</span>
+        <span class="hud-rail hud-rail--right">INSTITUTIONAL DIVISION // AUTH LEVEL 03</span>
+
+        <span class="hud-tick hud-tick--a"></span>
+        <span class="hud-tick hud-tick--b"></span>
+        <span class="hud-tick hud-tick--c"></span>
+        <span class="hud-tick hud-tick--d"></span>
+    </div>
+
+    <!-- LOGO CENTRAL DE PARAGON -->
+    <img
+        src="assets/paragon-emblem-2026.png"
+        class="boot-watermark"
+        alt=""
+    >
+
+    <!-- CÓDIGOS ANIMADOS -->
+    <div class="boot-code-background" id="bootCodeBackground"></div>
+
     <div class="boot-interface">
 
         <header class="boot-header">
@@ -129,13 +153,12 @@
                 <span class="boot-indicator"></span>
                 PARAGON // SYSTEM INITIALIZATION
             </div>
-            <span class="boot-reference">PSD-SYS/001</span>
+            <span class="boot-reference">[ PSD-SYS/001 ]</span>
         </header>
 
         <section class="boot-main">
 
-
-            <p class="boot-eyebrow">SECURE INSTITUTIONAL NETWORK</p>
+            <p class="boot-eyebrow">// SECURE INSTITUTIONAL NETWORK</p>
 
             <h1>PARAGON</h1>
             <h2>STRIKE DIVISION</h2>
@@ -151,9 +174,7 @@
                 <div id="progressBar" class="boot-progress-bar"></div>
             </div>
 
-            <div class="boot-status" id="bootStatus">
-                INITIALIZING SYSTEM...
-            </div>
+            <p class="boot-status" id="bootStatus">INITIALIZING SYSTEM...</p>
 
             <div class="boot-diagnostics">
 
@@ -176,7 +197,7 @@
 
             <div class="boot-terminal">
                 <div class="boot-terminal-heading">
-                    <span> SYSTEM LOG</span>
+                    <span>[ SYSTEM LOG ]</span>
                     <span>LIVE OUTPUT</span>
                 </div>
 
@@ -188,13 +209,9 @@
         </section>
 
         <footer class="boot-footer">
-            <span>PARAGON STRIKE DIVISION</span>
+            <span>[ PARAGON STRIKE DIVISION ]</span>
             <span>AUTHORIZED ACCESS ONLY</span>
         </footer>
 
     </div>
 </div>
-
-<script src="js/script.js"></script>
-</body>
-</html>
