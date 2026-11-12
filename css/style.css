@@ -1031,3 +1031,106 @@ body.access-page {
     .boot-status::before,
     .boot-log::after { animation: none; }
 }
+/* ==========================================
+   PARAGON // COMMAND PAGE
+========================================== */
+
+body.command-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px 0;
+    overflow-x: hidden;
+}
+
+#paragon-command {
+    width: min(1180px, 92%);
+    margin: auto;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+#command-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    background: rgba(10, 13, 16, .35);
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 1.6px;
+    color: var(--gray);
+}
+
+.command-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #d4dbe0;
+}
+
+#command-header p {
+    color: #77828b;
+    letter-spacing: 2px;
+}
+
+.command-back {
+    color: #9aa4ab;
+    text-decoration: none;
+    letter-spacing: 1.4px;
+    transition: color .25s ease;
+}
+
+.command-back:hover { color: var(--white); }
+
+#command-content {
+    min-height: 380px;
+    padding: 28px;
+    border: 1px solid var(--line);
+    background: rgba(10, 13, 16, .25);
+}
+
+.command-empty {
+    height: 100%;
+    min-height: 320px;
+    display: grid;
+    place-content: center;
+    gap: 12px;
+    text-align: center;
+    border: 1px dashed rgba(190, 200, 208, .12);
+}
+
+.command-empty-code {
+    font: 9px 'Orbitron', sans-serif;
+    letter-spacing: 2.6px;
+    color: #6d7780;
+}
+
+.command-empty p {
+    font: 11px 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+    color: #8d969c;
+}
+
+.command-footer {
+    display: flex;
+    justify-content: space-between;
+    font: 8px 'Orbitron', sans-serif;
+    letter-spacing: 1.4px;
+    color: #505a62;
+}
+
+@media (max-width: 620px) {
+    #command-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    #command-content { padding: 16px; }
+}
