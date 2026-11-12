@@ -3,26 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="theme-color" content="#07090b">
     <meta name="description" content="PARAGON STRIKE DIVISION - Command Platform">
     <meta name="author" content="PARAGON STRIKE DIVISION">
-
     <title>PARAGON // COMMAND</title>
-
-    <!-- Main Stylesheet -->
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body>
+<body class="command-page">
+
+    <div class="ambient-grid"></div>
+    <div class="ambient-glow"></div>
+
+    <div class="hud-frame" aria-hidden="true">
+        <span class="hud-corner hud-corner--tl"></span>
+        <span class="hud-corner hud-corner--tr"></span>
+        <span class="hud-corner hud-corner--bl"></span>
+        <span class="hud-corner hud-corner--br"></span>
+        <span class="hud-hazard hud-hazard--top"></span>
+        <span class="hud-hazard hud-hazard--bottom"></span>
+    </div>
 
     <main id="paragon-command">
-<!-- COMMAND PLATFORM -->
-<header id="command-header">
-    <h1>PARAGON STRIKE DIVISION</h1>
-    <p>COMMAND NETWORK</p>
-</header>
 
-<!-- SYSTEM CONTENT -->
-<section id="command-content">
-    <!-- MODULES WILL BE ADDED HERE -->
-</section>
+        <header id="command-header">
+            <div class="command-brand">
+                <span class="brand-indicator"></span>
+                <span>PARAGON STRIKE DIVISION</span>
+            </div>
+
+            <p>COMMAND NETWORK</p>
+
+            <a href="../index.html" class="command-back">← DISCONNECT</a>
+        </header>
+
+        <section id="command-content">
+            <!-- MODULES WILL BE ADDED HERE -->
+            <div class="command-empty">
+                <span class="command-empty-code">[ PSD-CMD/000 ]</span>
+                <p>NO MODULES LOADED</p>
+            </div>
+        </section>
+
+        <footer class="command-footer">
+            <span>[ PSD // COMMAND PLATFORM ]</span>
+            <span>AUTH LEVEL 03 · 2026</span>
+        </footer>
+
+    </main>
+
+</body>
+</html>
