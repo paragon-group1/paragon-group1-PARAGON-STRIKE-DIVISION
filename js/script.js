@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
         bootStarted = true;
 
         bootScreen.classList.add("active");
+bootScreen.setAttribute("aria-hidden", "false");
+bootScreen.removeAttribute("hidden");
         bootScreen.setAttribute("aria-hidden", "false");
 
         document.body.style.overflow = "hidden";
@@ -167,14 +169,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 65);
     }
 
-    // INICIAR SOLAMENTE AL PRESIONAR ENTER NETWORK
-    enterButton.addEventListener("click", (event) => {
+ // INICIAR SOLAMENTE AL PRESIONAR ENTER NETWORK
+enterButton.addEventListener("click", (event) => {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        startSystemBoot();
+    startSystemBoot();
 
-    });
+    // RED DE SEGURIDAD: si el boot no se hace visible, no te deja colgado
+    setTimeout(() => {
+        if (!bootScreen.classList.contains("active")) {
+            window.location.href = enterButton.href;
+        }
+    }, 400);
 
 });
-
