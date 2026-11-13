@@ -111,107 +111,74 @@
 <!-- PARAGON SYSTEM BOOT -->
 <div id="systemBoot" class="system-boot" aria-hidden="true">
 
-    <div class="boot-grid"></div>
-    <div class="boot-scanline"></div>
-    <div class="boot-vignette"></div>
-
-    <!-- MARCO HUD -->
-    <div class="hud-frame" aria-hidden="true">
-        <span class="hud-corner hud-corner--tl"></span>
-        <span class="hud-corner hud-corner--tr"></span>
-        <span class="hud-corner hud-corner--bl"></span>
-        <span class="hud-corner hud-corner--br"></span>
-
-        <span class="hud-hazard hud-hazard--top"></span>
-        <span class="hud-hazard hud-hazard--bottom"></span>
-
-        <span class="hud-reticle"></span>
-
-        <span class="hud-rail hud-rail--left">PSD-SYS/001 // SECURE CHANNEL // DO NOT DISCONNECT</span>
-        <span class="hud-rail hud-rail--right">INSTITUTIONAL DIVISION // AUTH LEVEL 03</span>
-
-        <span class="hud-tick hud-tick--a"></span>
-        <span class="hud-tick hud-tick--b"></span>
-        <span class="hud-tick hud-tick--c"></span>
-        <span class="hud-tick hud-tick--d"></span>
+    <div class="boot-layer" aria-hidden="true">
+        <div class="boot-grid"></div>
+        <div class="boot-techlines"></div>
+        <div class="boot-scanline"></div>
+        <div class="boot-vignette"></div>
+        <div class="boot-flash"></div>
     </div>
 
-    <!-- LOGO CENTRAL DE PARAGON -->
+    <div class="hud-shell" aria-hidden="true"></div>
+
+    <span class="hud-corner hud-corner--tl" aria-hidden="true"></span>
+    <span class="hud-corner hud-corner--tr" aria-hidden="true"></span>
+    <span class="hud-corner hud-corner--bl" aria-hidden="true"></span>
+    <span class="hud-corner hud-corner--br" aria-hidden="true"></span>
+
+    <span class="hud-rail hud-rail--left" aria-hidden="true"></span>
+    <span class="hud-rail hud-rail--right" aria-hidden="true"></span>
+
     <img
         src="assets/paragon-emblem-2026.png"
         class="boot-watermark"
         alt=""
     >
 
-    <!-- CÓDIGOS ANIMADOS -->
-    <div class="boot-code-background" id="bootCodeBackground"></div>
+    <div class="boot-stage">
 
-    <div class="boot-interface">
+        <header class="boot-topbar">
 
-        <header class="boot-header">
-            <div class="boot-brand">
-                <span class="boot-indicator"></span>
-                PARAGON // SYSTEM INITIALIZATION
+            <div class="boot-title-block">
+                <h1 class="boot-title">PARAGON <em>//</em> <span>SYSTEM BOOT</span></h1>
+                <span class="boot-title-rule" aria-hidden="true"></span>
             </div>
-            <span class="boot-reference">[ PSD-SYS/001 ]</span>
+
+            <span class="boot-hazard boot-hazard--top" aria-hidden="true"></span>
+
         </header>
 
-        <section class="boot-main">
+        <div class="boot-middle">
+            <div class="boot-logon" id="bootLog" aria-live="polite"></div>
+        </div>
 
-            <p class="boot-eyebrow">// SECURE INSTITUTIONAL NETWORK</p>
+        <div class="boot-bottom">
 
-            <h1>PARAGON</h1>
-            <h2>STRIKE DIVISION</h2>
+            <div class="boot-core">
 
-            <div class="boot-divider"></div>
+                <p class="boot-core-label">SYSTEM BOOT</p>
 
-            <div class="boot-progress-heading">
-                <span>SYSTEM BOOT SEQUENCE</span>
-                <strong id="bootPercent">1%</strong>
-            </div>
-
-            <div class="boot-progress-track">
-                <div id="progressBar" class="boot-progress-bar"></div>
-            </div>
-
-            <p class="boot-status" id="bootStatus">INITIALIZING SYSTEM...</p>
-
-            <div class="boot-diagnostics">
-
-                <div class="diagnostic-row">
-                    <span>CORE SYSTEM</span>
-                    <strong id="coreStatus">INITIALIZING</strong>
+                <div class="boot-progress">
+                    <span class="boot-progress-frame" aria-hidden="true"></span>
+                    <div class="boot-progress-track">
+                        <div class="boot-progress-bar" id="progressBar"></div>
+                    </div>
                 </div>
 
-                <div class="diagnostic-row">
-                    <span>NETWORK</span>
-                    <strong id="networkStatus">WAITING</strong>
-                </div>
-
-                <div class="diagnostic-row">
-                    <span>SECURITY PROTOCOL</span>
-                    <strong id="securityStatus">WAITING</strong>
-                </div>
+                <p class="boot-status">
+                    <strong id="bootPercent">01%</strong>
+                    <span class="boot-status-sep">—</span>
+                    <span id="bootStatus">INITIALIZING SYSTEM</span>
+                </p>
 
             </div>
 
-            <div class="boot-terminal">
-                <div class="boot-terminal-heading">
-                    <span>[ SYSTEM LOG ]</span>
-                    <span>LIVE OUTPUT</span>
-                </div>
+            <footer class="boot-bottombar">
+                <span class="boot-hazard boot-hazard--bottom" aria-hidden="true"></span>
+                <span class="boot-barcode" aria-hidden="true"></span>
+            </footer>
 
-                <div id="bootLog" class="boot-log">
-                    <p>> PARAGON INITIALIZATION REQUESTED</p>
-                </div>
-            </div>
-
-        </section>
-
-        <footer class="boot-footer">
-            <span>[ PARAGON STRIKE DIVISION ]</span>
-            <span>AUTHORIZED ACCESS ONLY</span>
-        </footer>
+        </div>
 
     </div>
 </div>
