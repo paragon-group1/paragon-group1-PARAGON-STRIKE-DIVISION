@@ -1,4 +1,3 @@
-
 /* ==========================================
    PARAGON // SYSTEM BOOT ENGINE
 ========================================== */
@@ -11,176 +10,128 @@ document.addEventListener("DOMContentLoaded", () => {
     const progressBar = document.getElementById("progressBar");
     const bootPercent = document.getElementById("bootPercent");
     const bootStatus = document.getElementById("bootStatus");
-
-    const coreStatus = document.getElementById("coreStatus");
-    const networkStatus = document.getElementById("networkStatus");
-    const securityStatus = document.getElementById("securityStatus");
-
     const bootLog = document.getElementById("bootLog");
-    const codeBackground = document.getElementById("bootCodeBackground");
 
     if (!enterButton || !bootScreen) return;
 
     let bootStarted = false;
 
-    // GENERAR CÓDIGOS ANIMADOS DE FONDO
-    function generateBackgroundCodes() {
+    const LOG_SEQUENCE = [
+        { at: 0,  text: "ONLINE_",                 green: true },
+        { at: 4,  text: "01 // INITIALIZING" },
+        { at: 10, text: "10.0.0.24",               dim: true },
+        { at: 16, text: "SYSTEM CHECK..." },
+        { at: 28, text: "SECURITY VERIFIED",       green: true },
+        { at: 42, text: "NETWORK CONNECTED",       green: true },
+        { at: 56, text: "AUTH HANDSHAKE // 0x7F2A" },
+        { at: 70, text: "LOADING COMMAND MODULES", dim: true },
+        { at: 84, text: "ENCRYPTION LAYER READY" },
+        { at: 95, text: "ACCESS GRANTED",          green: true }
+    ];
 
-        if (!codeBackground) return;
-
-        const characters = "01ABCDEF0123456789<>/{}[]#$%";
-        
-        for (let i = 0; i < 12; i++) {
-
-            const column = document.createElement("div");
-            column.className = "boot-code-column";
-
-            let code = "";
-
-            for (let j = 0; j < 65; j++) {
-                code += characters[
-                    Math.floor(Math.random() * characters.length)
-                ] + " ";
-            }
-
-            column.textContent = code;
-
-            column.style.animationDuration =
-                (12 + Math.random() * 18) + "s";
-
-            column.style.animationDelay =
-                (-Math.random() * 20) + "s";
-
-            codeBackground.appendChild(column);
-        }
+    function statusFor(percent) {
+        if (percent < 12) return "INITIALIZING SYSTEM";
+        if (percent < 26) return "RUNNING SYSTEM CHECK";
+        if (percent < 40) return "VERIFYING SECURITY";
+        if (percent < 55) return "CONNECTING NETWORK";
+        if (percent < 70) return "SYNCHRONIZING DATA";
+        if (percent < 86) return "LOADING MODULES";
+        if (percent < 100) return "FINALIZING";
+        return "ACCESS GRANTED";
     }
 
-    // AGREGAR MENSAJES AL REGISTRO DEL SISTEMA
-    function addBootLog(message) {
+    function pad(value) {
+        return value < 10 ? "0" + value : String(value);
+    }
+
+    function addLog(entry) {
 
         if (!bootLog) return;
 
         const line = document.createElement("p");
+        line.textContent = entry.text;
 
-        const time = new Date().toLocaleTimeString("es-PE", {
-            hour12: false
-        });
-
-        line.textContent = `[${time}] > ${message}`;
+        if (entry.green) line.classList.add("is-green");
+        if (entry.dim) line.classList.add("is-dim");
 
         bootLog.appendChild(line);
-
-        while (bootLog.children.length > 12) {
-            bootLog.removeChild(bootLog.firstChild);
-        }
-
-        bootLog.scrollTop = bootLog.scrollHeight;
     }
 
-    // ACTUALIZAR ESTADOS
-    function updateDiagnostics(percent) {
-
-        if (percent >= 20) {
-            coreStatus.textContent = "VERIFIED";
-            coreStatus.classList.add("verified");
-        }
-
-        if (percent >= 50) {
-            networkStatus.textContent = "CONNECTED";
-            networkStatus.classList.add("verified");
-        }
-
-        if (percent >= 80) {
-            securityStatus.textContent = "SECURE";
-            securityStatus.classList.add("verified");
-        }
-    }
-
-    // MENSAJES DE INICIALIZACIÓN
-    function getBootMessage(percent) {
-
-        if (percent < 15) return "INITIALIZING CORE SYSTEM...";
-        if (percent < 30) return "LOADING SYSTEM COMPONENTS...";
-        if (percent < 45) return "VERIFYING CORE INTEGRITY...";
-        if (percent < 60) return "ESTABLISHING NETWORK CONNECTION...";
-        if (percent < 75) return "SYNCHRONIZING INSTITUTIONAL DATA...";
-        if (percent < 90) return "VERIFYING SECURITY PROTOCOLS...";
-        if (percent < 100) return "PREPARING COMMAND ACCESS...";
-
-        return "SYSTEM INITIALIZED // ACCESS GRANTED";
-    }
-
-    // SECUENCIA PRINCIPAL
     function startSystemBoot() {
 
         if (bootStarted) return;
 
         bootStarted = true;
 
-        bootScreen.classList.add("active");
-bootScreen.setAttribute("aria-hidden", "false");
-bootScreen.removeAttribute("hidden");
+        bootScreen.removeAttribute("hidden");
         bootScreen.setAttribute("aria-hidden", "false");
+        bootScreen.classList.add("active");
 
         document.body.style.overflow = "hidden";
 
-        generateBackgroundCodes();
-
-        addBootLog("PARAGON BOOT SEQUENCE STARTED");
-        addBootLog("CORE INITIALIZATION REQUESTED");
+        addLog({ text: "ONLINE_", green: true });
+        addLog({ text: "01 // INITIALIZING" });
 
         let progress = 1;
-        let previousStage = "";
+        let logIndex = 2;
+        let previousStatus = "";
 
-        const loading = setInterval(() => {
+        const tick = setInterval(() => {
 
-            progress++;
+            progress += Math.random() * 2.2 + 0.7;
+            if (progress > 100) progress = 100;
 
-            progressBar.style.width = progress + "%";
-            bootPercent.textContent = progress + "%";
+            const value = Math.floor(progress);
 
-            bootStatus.textContent = getBootMessage(progress);
+            progressBar.style.width = value + "%";
+            bootPercent.textContent = pad(value) + "%";
 
-            updateDiagnostics(progress);
+            const status = statusFor(value);
 
-            const currentStage = getBootMessage(progress);
-
-            if (currentStage !== previousStage) {
-                addBootLog(currentStage);
-                previousStage = currentStage;
+            if (status !== previousStatus) {
+                bootStatus.textContent = status;
+                previousStatus = status;
             }
 
-            // FINALIZACIÓN
-            if (progress >= 100) {
+            while (
+                logIndex < LOG_SEQUENCE.length &&
+                LOG_SEQUENCE[logIndex].at <= value
+            ) {
+                addLog(LOG_SEQUENCE[logIndex]);
+                logIndex++;
+            }
 
-                clearInterval(loading);
+            if (value >= 100) {
 
-                addBootLog("ALL SYSTEM CHECKS COMPLETED");
-                addBootLog("COMMAND ACCESS AUTHORIZED");
+                clearInterval(tick);
 
-                bootStatus.textContent =
-                    "SYSTEM INITIALIZED // ACCESS GRANTED";
+                progressBar.style.width = "100%";
+                bootPercent.textContent = "100%";
+                bootStatus.textContent = "ACCESS GRANTED";
+
+                bootScreen.classList.add("is-complete");
 
                 setTimeout(() => {
                     window.location.href = enterButton.href;
-                }, 1000);
+                }, 850);
             }
 
-        }, 65);
+        }, 60);
     }
 
- // INICIAR SOLAMENTE AL PRESIONAR ENTER NETWORK
-enterButton.addEventListener("click", (event) => {
+    // INICIAR SOLAMENTE AL PRESIONAR ENTER NETWORK
+    enterButton.addEventListener("click", (event) => {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    startSystemBoot();
+        startSystemBoot();
 
-    // RED DE SEGURIDAD: si el boot no se hace visible, no te deja colgado
-    setTimeout(() => {
-        if (!bootScreen.classList.contains("active")) {
-            window.location.href = enterButton.href;
-        }
-    }, 400);
+        // RED DE SEGURIDAD
+        setTimeout(() => {
+            if (!bootScreen.classList.contains("active")) {
+                window.location.href = enterButton.href;
+            }
+        }, 400);
+    });
 
 });
