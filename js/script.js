@@ -1,137 +1,158 @@
-/* ==========================================
-   PARAGON // SYSTEM BOOT ENGINE
-========================================== */
+/* ==========================================================
+   PARAGON // SYSTEM BOOT ENGINE — v2
+========================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
 
-    const enterButton = document.querySelector(".enter-button");
-    const bootScreen = document.getElementById("systemBoot");
+    const screen   = document.getElementById("systemBoot");
+    const trigger  = document.querySelector(".enter-button");
 
-    const progressBar = document.getElementById("progressBar");
-    const bootPercent = document.getElementById("bootPercent");
-    const bootStatus = document.getElementById("bootStatus");
-    const bootLog = document.getElementById("bootLog");
+    if (!screen || !trigger) return;
 
-    if (!enterButton || !bootScreen) return;
+    const bar      = document.getElementById("pbBar");
+    const pctEl    = document.getElementById("pbPct");
+    const statusEl = document.getElementById("pbStatus");
+    const logEl    = document.getElementById("pbLog");
+    const rainEl   = document.getElementById("pbRain");
 
-    let bootStarted = false;
+    let running = false;
 
-    const LOG_SEQUENCE = [
-        { at: 0,  text: "ONLINE_",                 green: true },
-        { at: 4,  text: "01 // INITIALIZING" },
-        { at: 10, text: "10.0.0.24",               dim: true },
-        { at: 16, text: "SYSTEM CHECK..." },
-        { at: 28, text: "SECURITY VERIFIED",       green: true },
-        { at: 42, text: "NETWORK CONNECTED",       green: true },
-        { at: 56, text: "AUTH HANDSHAKE // 0x7F2A" },
-        { at: 70, text: "LOADING COMMAND MODULES", dim: true },
-        { at: 84, text: "ENCRYPTION LAYER READY" },
-        { at: 95, text: "ACCESS GRANTED",          green: true }
+    const LOG = [
+        [0,  "ONLINE_", "g"],
+        [4,  "01 // INITIALIZING"],
+        [10, "10.0.0.24", "d"],
+        [16, "SYSTEM CHECK..."],
+        [28, "SECURITY VERIFIED", "g"],
+        [42, "NETWORK CONNECTED", "g"],
+        [56, "AUTH HANDSHAKE // 0x7F2A", "d"],
+        [70, "LOADING COMMAND MODULES", "d"],
+        [84, "ENCRYPTION LAYER READY"],
+        [95, "ACCESS GRANTED", "g"]
     ];
 
-    function statusFor(percent) {
-        if (percent < 12) return "INITIALIZING SYSTEM";
-        if (percent < 26) return "RUNNING SYSTEM CHECK";
-        if (percent < 40) return "VERIFYING SECURITY";
-        if (percent < 55) return "CONNECTING NETWORK";
-        if (percent < 70) return "SYNCHRONIZING DATA";
-        if (percent < 86) return "LOADING MODULES";
-        if (percent < 100) return "FINALIZING";
-        return "ACCESS GRANTED";
+    const STATUS = [
+        [0,   "INITIALIZING SYSTEM"],
+        [14,  "RUNNING SYSTEM CHECK"],
+        [28,  "VERIFYING SECURITY"],
+        [42,  "CONNECTING NETWORK"],
+        [56,  "SYNCHRONIZING DATA"],
+        [72,  "LOADING MODULES"],
+        [88,  "FINALIZING BOOT"],
+        [100, "ACCESS GRANTED"]
+    ];
+
+    function pad(n) {
+        return n < 10 ? "0" + n : String(n);
     }
 
-    function pad(value) {
-        return value < 10 ? "0" + value : String(value);
+    function statusAt(v) {
+        let out = STATUS[0][1];
+        for (const item of STATUS) {
+            if (v >= item[0]) out = item[1];
+        }
+        return out;
     }
 
-    function addLog(entry) {
-
-        if (!bootLog) return;
-
-        const line = document.createElement("p");
-        line.textContent = entry.text;
-
-        if (entry.green) line.classList.add("is-green");
-        if (entry.dim) line.classList.add("is-dim");
-
-        bootLog.appendChild(line);
+    function pushLog(text, cls) {
+        if (!logEl) return;
+        const p = document.createElement("p");
+        p.textContent = text;
+        if (cls) p.className = cls;
+        logEl.appendChild(p);
     }
 
-    function startSystemBoot() {
+    function buildRain() {
+        if (!rainEl || rainEl.childElementCount) return;
 
-        if (bootStarted) return;
+        const chars = "01ABCDEF0123456789<>/{}[]#$%&*";
 
-        bootStarted = true;
+        for (let i = 0; i < 9; i++) {
 
-        bootScreen.removeAttribute("hidden");
-        bootScreen.setAttribute("aria-hidden", "false");
-        bootScreen.classList.add("active");
+            const col = document.createElement("span");
+            let text = "";
+
+            for (let j = 0; j < 60; j++) {
+                text += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            col.textContent = text;
+            col.style.animationDuration = (9 + Math.random() * 12) + "s";
+            col.style.animationDelay = (-Math.random() * 16) + "s";
+
+            rainEl.appendChild(col);
+        }
+    }
+
+    function boot() {
+
+        if (running) return;
+        running = true;
+
+        screen.removeAttribute("hidden");
+        screen.setAttribute("aria-hidden", "false");
+        screen.classList.add("is-on");
 
         document.body.style.overflow = "hidden";
 
-        addLog({ text: "ONLINE_", green: true });
-        addLog({ text: "01 // INITIALIZING" });
+        buildRain();
+
+        pushLog("ONLINE_", "g");
+        pushLog("01 // INITIALIZING");
 
         let progress = 1;
         let logIndex = 2;
-        let previousStatus = "";
+        let lastStatus = "";
 
-        const tick = setInterval(() => {
+        const timer = setInterval(function () {
 
-            progress += Math.random() * 2.2 + 0.7;
+            progress += Math.random() * 2.2 + 0.8;
             if (progress > 100) progress = 100;
 
             const value = Math.floor(progress);
 
-            progressBar.style.width = value + "%";
-            bootPercent.textContent = pad(value) + "%";
+            if (bar) bar.style.width = value + "%";
+            if (pctEl) pctEl.textContent = pad(value) + "%";
 
-            const status = statusFor(value);
+            const st = statusAt(value);
 
-            if (status !== previousStatus) {
-                bootStatus.textContent = status;
-                previousStatus = status;
+            if (statusEl && st !== lastStatus) {
+                statusEl.textContent = st;
+                lastStatus = st;
             }
 
-            while (
-                logIndex < LOG_SEQUENCE.length &&
-                LOG_SEQUENCE[logIndex].at <= value
-            ) {
-                addLog(LOG_SEQUENCE[logIndex]);
+            while (logIndex < LOG.length && LOG[logIndex][0] <= value) {
+                pushLog(LOG[logIndex][1], LOG[logIndex][2]);
                 logIndex++;
             }
 
             if (value >= 100) {
 
-                clearInterval(tick);
+                clearInterval(timer);
 
-                progressBar.style.width = "100%";
-                bootPercent.textContent = "100%";
-                bootStatus.textContent = "ACCESS GRANTED";
+                if (bar) bar.style.width = "100%";
+                if (pctEl) pctEl.textContent = "100%";
+                if (statusEl) statusEl.textContent = "ACCESS GRANTED";
 
-                bootScreen.classList.add("is-complete");
+                screen.classList.add("is-done");
 
-                setTimeout(() => {
-                    window.location.href = enterButton.href;
-                }, 850);
+                setTimeout(function () {
+                    window.location.href = trigger.getAttribute("href");
+                }, 800);
             }
 
-        }, 60);
+        }, 55);
     }
 
-    // INICIAR SOLAMENTE AL PRESIONAR ENTER NETWORK
-    enterButton.addEventListener("click", (event) => {
+    trigger.addEventListener("click", function (event) {
 
         event.preventDefault();
+        boot();
 
-        startSystemBoot();
-
-        // RED DE SEGURIDAD
-        setTimeout(() => {
-            if (!bootScreen.classList.contains("active")) {
-                window.location.href = enterButton.href;
+        setTimeout(function () {
+            if (!screen.classList.contains("is-on")) {
+                window.location.href = trigger.getAttribute("href");
             }
         }, 400);
     });
 
-});
+})();
