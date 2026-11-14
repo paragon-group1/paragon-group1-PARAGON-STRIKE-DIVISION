@@ -110,87 +110,89 @@
         <span>SECURE SYSTEMS · EST. 2026</span>
     </div>
 
-    <!-- PARAGON SYSTEM BOOT -->
-    <div id="systemBoot" class="pb-screen" aria-hidden="true">
+    <!-- ══ PARAGON // INTRUSION SEQUENCE ══ -->
+<div id="systemBoot" class="hk-screen" aria-hidden="true">
 
-        <div class="pb-bg" aria-hidden="true">
-            <div class="pb-grid"></div>
-            <div class="pb-diag"></div>
-            <div class="pb-vignette"></div>
-            <div class="pb-scan"></div>
-            <div class="pb-flash"></div>
-        </div>
+    <div class="hk-crt" aria-hidden="true"></div>
+    <div class="hk-roll" aria-hidden="true"></div>
+    <div class="hk-noise" aria-hidden="true"></div>
+    <div class="hk-vignette" aria-hidden="true"></div>
+    <div class="hk-flash" aria-hidden="true"></div>
 
-        <div class="pb-frame" aria-hidden="true"></div>
-        <div class="pb-frame pb-frame--inner" aria-hidden="true"></div>
-
-        <span class="pb-slash pb-slash--tl" aria-hidden="true"></span>
-        <span class="pb-slash pb-slash--tr" aria-hidden="true"></span>
-        <span class="pb-slash pb-slash--bl" aria-hidden="true"></span>
-        <span class="pb-slash pb-slash--br" aria-hidden="true"></span>
-
-        <span class="pb-rail pb-rail--left" aria-hidden="true"></span>
-        <span class="pb-rail pb-rail--right" aria-hidden="true"></span>
-
-        <img
-            src="https://paragon-group1.github.io/paragon-group1-PARAGON-STRIKE-DIVISION/assets/paragon-emblem-2026.png"
-            class="pb-logo"
-            alt=""
-        >
-
-        <div class="pb-rain" id="pbRain" aria-hidden="true"></div>
-
-        <div class="pb-stage">
-
-            <header class="pb-top">
-
-                <div class="pb-title-wrap">
-                    <h1 class="pb-title">PARAGON <em>//</em> <span>SYSTEM BOOT</span></h1>
-                    <span class="pb-rule" aria-hidden="true"></span>
-                </div>
-
-                <span class="pb-hazard pb-hazard--top" aria-hidden="true"></span>
-
-            </header>
-
-            <div class="pb-mid">
-                <div class="pb-log" id="pbLog" aria-live="polite"></div>
-            </div>
-
-            <div class="pb-bottom">
-
-                <div class="pb-core">
-
-                    <p class="pb-label">SYSTEM BOOT</p>
-
-                    <div class="pb-bar">
-                        <span class="pb-bar__frame" aria-hidden="true"></span>
-                        <div class="pb-bar__track">
-                            <div class="pb-bar__fill" id="pbBar"></div>
-                        </div>
-                    </div>
-
-                    <p class="pb-status">
-                        <strong id="pbPct">01%</strong>
-                        <span class="pb-status__sep">—</span>
-                        <span id="pbStatus">INITIALIZING SYSTEM</span>
-                    </p>
-
-                </div>
-
-                <div class="pb-strip" aria-hidden="true"></div>
-
-                <footer class="pb-foot">
-                    <span class="pb-hazard pb-hazard--bottom" aria-hidden="true"></span>
-                    <span class="pb-dash" aria-hidden="true"></span>
-                </footer>
-
-            </div>
-
-        </div>
+    <div class="hk-logo-wrap" aria-hidden="true">
+        <img class="hk-logo hk-logo--split hk-logo--r" src="https://paragon-group1.github.io/paragon-group1-PARAGON-STRIKE-DIVISION/assets/paragon-emblem-2026.png" alt="">
+        <img class="hk-logo hk-logo--split hk-logo--b" src="https://paragon-group1.github.io/paragon-group1-PARAGON-STRIKE-DIVISION/assets/paragon-emblem-2026.png" alt="">
+        <img class="hk-logo" src="https://paragon-group1.github.io/paragon-group1-PARAGON-STRIKE-DIVISION/assets/paragon-emblem-2026.png" alt="" decoding="async">
     </div>
 
-    <script src="js/script.js"></script>
+    <div class="hk-frame" aria-hidden="true">
+        <span class="hk-corner hk-corner--tl"></span>
+        <span class="hk-corner hk-corner--tr"></span>
+        <span class="hk-corner hk-corner--bl"></span>
+        <span class="hk-corner hk-corner--br"></span>
+    </div>
 
-</body>
-</html>
+    <div class="hk-stage">
+
+        <header class="hk-bar">
+            <span class="hk-tag">INTRUSION</span>
+            <span class="hk-meta">TARGET <b>psd-core</b></span>
+            <span class="hk-meta">HOP <b id="hkHop">00</b></span>
+            <span class="hk-meta hk-meta--end" id="hkClock">00:00.000</span>
+        </header>
+
+        <main class="hk-grid">
+
+            <div class="hk-term">
+                <div class="hk-term__bar">root@paragon:~# session --encrypted</div>
+                <pre class="hk-log" id="hkLog" role="log" aria-live="polite"></pre>
+            </div>
+
+            <aside class="hk-side">
+
+                <div class="hk-block">
+                    <span class="hk-block__title">MEMORY DUMP</span>
+                    <pre class="hk-hex" id="hkHex"></pre>
+                </div>
+
+                <div class="hk-block">
+                    <span class="hk-block__title">FIREWALL</span>
+                    <div class="hk-meter"><i id="hkFw1"></i></div>
+                    <div class="hk-meter"><i id="hkFw2"></i></div>
+                    <div class="hk-meter"><i id="hkFw3"></i></div>
+                </div>
+
+                <div class="hk-block">
+                    <span class="hk-block__title">KEY</span>
+                    <p class="hk-key" id="hkKey">········</p>
+                </div>
+
+            </aside>
+
+        </main>
+
+        <footer class="hk-foot">
+            <div class="hk-prog">
+                <div class="hk-prog__track">
+                    <div
+                        class="hk-prog__fill"
+                        id="hkBar"
+                        role="progressbar"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    ></div>
+                </div>
+                <div class="hk-prog__meta">
+                    <strong id="hkPct">00%</strong>
+                    <span id="hkStatus">ESTABLISHING LINK</span>
+                </div>
+            </div>
+            <span class="hk-hint">[ ESC ] SKIP</span>
+        </footer>
+
+    </div>
+
+    <div class="hk-stamp" id="hkStamp" aria-hidden="true">ACCESS GRANTED</div>
+
+</div>
